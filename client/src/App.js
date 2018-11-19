@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import axios from "axios";
 
 class App extends Component {
-  // initialize our state 
   state = {
     data: [],
     id: 0,
@@ -13,9 +12,9 @@ class App extends Component {
     objectToUpdate: null
   };
 
-  // when component mounts, first thing it does is fetch all existing data in our db
-  // then we incorporate a polling logic so that we can easily see if our db has 
-  // changed and implement those changes into our UI
+ /**
+ * @description On mounts, fetch all data from db with polling for changes
+ */
   componentDidMount() {
     this.getDataFromDb();
     if (!this.state.intervalIsSet) {
@@ -24,8 +23,9 @@ class App extends Component {
     }
   }
 
-  // never let a process live forever 
-  // always kill a process everytime we are done using it
+  /**
+   * @description On Unmount kill the polling
+   */
   componentWillUnmount() {
     if (this.state.intervalIsSet) {
       clearInterval(this.state.intervalIsSet);
@@ -33,21 +33,19 @@ class App extends Component {
     }
   }
 
-  // just a note, here, in the front end, we use the id key of our data object 
-  // in order to identify which we want to Update or delete.
-  // for our back end, we use the object id assigned by MongoDB to modify 
-  // data base entries
-
-  // our first get method that uses our backend api to 
-  // fetch data from our data base
+  /**
+   * @description GetData method and sets it into the app state.
+   */
   getDataFromDb = () => {
     fetch("/api/getData")
       .then(data => data.json())
       .then(res => this.setState({ data: res.data }));
   };
 
-  // our put method that uses our backend api
-  // to create new query into our data base
+  /**
+   * @description PutData method, takign data to be stored.
+   *              Needs Heavy Reafactor in regards to the IDs
+   */
   putDataToDB = message => {
     let currentIds = this.state.data.map(data => data.id);
     let idToBeAdded = 0;
@@ -62,9 +60,11 @@ class App extends Component {
   };
 
 
-  // our delete method that uses our backend api 
-  // to remove existing database information
-  deleteFromDB = idTodelete => {
+   /**
+   * @description DeleteData method, erasing existing data.
+   *              Needs Heavy Reafactor related to the the previous two
+   */
+  deleteDataFromDB = idTodelete => {
     let objIdToDelete = null;
     this.state.data.forEach(dat => {
       if (dat.id === idTodelete) {
@@ -80,8 +80,10 @@ class App extends Component {
   };
 
 
-  // our update method that uses our backend api
-  // to overwrite existing data base information
+  /**
+   * @description UpdateData method, updating existing data.
+   *              Needs Heavy Reafactor related to the previous three.
+   */
   updateDB = (idToUpdate, updateToApply) => {
     let objIdToUpdate = null;
     this.state.data.forEach(dat => {
@@ -97,9 +99,9 @@ class App extends Component {
   };
 
 
-  // here is our UI
-  // it is easy to understand their functions when you 
-  // see them render into our screen
+  /**
+   * @description Render the UI, pretty minimalistic and just for testing.
+   */
   render() {
     const { data } = this.state;
     return (
@@ -108,12 +110,12 @@ class App extends Component {
           {data.length <= 0
             ? "NO DB ENTRIES YET"
             : data.map(dat => (
-                <li style={{ padding: "10px" }} key={dat.id}>
-                  <span style={{ color: "gray" }}> id: </span> {dat.id} <br />
-                  <span style={{ color: "gray" }}> data: </span>
-                  {dat.message}
-                </li>
-              ))}
+              <li style={{ padding: "10px" }} key={dat.id}>
+                <span style={{ color: "gray" }}> id: </span> {dat.id} <br />
+                <span style={{ color: "gray" }}> data: </span>
+                {dat.message}
+              </li>
+            ))}
         </ul>
         <div style={{ padding: "10px" }}>
           <input
@@ -133,7 +135,7 @@ class App extends Component {
             onChange={e => this.setState({ idToDelete: e.target.value })}
             placeholder="put id of item to delete here"
           />
-          <button onClick={() => this.deleteFromDB(this.state.idToDelete)}>
+          <button onClick={() => this.deleteDataFromDB(this.state.idToDelete)}>
             DELETE
           </button>
         </div>

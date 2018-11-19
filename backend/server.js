@@ -8,10 +8,14 @@ const API_PORT = 3001;
 const app = express();
 const router = express.Router();
 
-// this is our MongoDB database
+// this is our MongoDB database, censored the pass for obvious reasons.
 const dbRoute = "mongodb://admin:<pass>@ds211724.mlab.com:11724/charon";
 
-// connects our back end code with the database
+/**
+ * @description Connects the back end code with the database
+ * @param string - dbRoute, string for DB connection
+ * @param Object - configuration object
+ */
 mongoose.connect(
   dbRoute,
   { useNewUrlParser: true }
@@ -30,8 +34,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger("dev"));
 
-// this is our get method
-// this method fetches all available data in our database
+/**
+ * @description Get the data from the DB
+ */
 router.get("/getData", (req, res) => {
   Data.find((err, data) => {
     if (err) return res.json({ success: false, error: err });
@@ -39,8 +44,11 @@ router.get("/getData", (req, res) => {
   });
 });
 
-// this is our update method
-// this method overwrites existing data in our database
+/**
+ * @description Updates the data from the DB
+ * @param req - request object with the values.
+ * @param res - response object in which to write the response.
+ */
 router.post("/updateData", (req, res) => {
   const { id, update } = req.body;
   Data.findOneAndUpdate(id, update, err => {
@@ -49,8 +57,11 @@ router.post("/updateData", (req, res) => {
   });
 });
 
-// this is our delete method
-// this method removes existing data in our database
+/**
+ * @description Erase the data from the DB
+ * @param req - request object with the values.
+ * @param res - response object in which to write the response.
+ */
 router.delete("/deleteData", (req, res) => {
   const { id } = req.body;
   Data.findOneAndDelete(id, err => {
@@ -59,8 +70,11 @@ router.delete("/deleteData", (req, res) => {
   });
 });
 
-// this is our create methid
-// this method adds new data in our database
+/**
+ * @description Adds the data from the DB
+ * @param req - request object with the values.
+ * @param res - response object in which to write the response.
+ */
 router.post("/putData", (req, res) => {
   let data = new Data();
 
