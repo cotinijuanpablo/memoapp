@@ -1,5 +1,5 @@
-Archetype for the application
-Using React, Axios, Express and MongoDB.
+Stack of the application
+React, Axios, Express and MongoDB.
 
 //TODO
 
@@ -19,3 +19,8 @@ Severity Low
     Check how to reuse the dependencies from all the package.json
         Is this really a good idea?
     Shoudl add some value sanitization 
+    Webpack, check if I can use it.
+    how to create react tooltips
+    babelify
+    Monitor button for pasive fetching using the interval i had commented
+    Add logging in the backend with errors/messages

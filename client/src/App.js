@@ -18,8 +18,8 @@ class App extends Component {
   componentDidMount() {
     this.getDataFromDb();
     if (!this.state.intervalIsSet) {
-      let interval = setInterval(this.getDataFromDb, 1000);
-      this.setState({ intervalIsSet: interval });
+      //let interval = setInterval(this.getDataFromDb, 1000);
+      //this.setState({ intervalIsSet: interval });
     }
   }
 
@@ -36,10 +36,10 @@ class App extends Component {
   /**
    * @description GetData method and sets it into the app state.
    */
-  getDataFromDb = () => {
-    fetch("/api/getData")
-      .then(data => data.json())
-      .then(res => this.setState({ data: res.data }));
+  getDataFromDb = (id) => {
+    var url = !id ? "/api/tasks/" : `/api/tasks/${id}`
+    axios.get(url)
+        .then(data => this.setState({ data: data.data.data }))
   };
 
   /**
@@ -53,12 +53,12 @@ class App extends Component {
       ++idToBeAdded;
     }
 
-    axios.post("/api/putData", {
+    axios.post("/api/tasks/putData", {
       id: idToBeAdded,
       message: message
-    });
+    })
+    .then(()=> this.getDataFromDb());
   };
-
 
    /**
    * @description DeleteData method, erasing existing data.
@@ -67,18 +67,18 @@ class App extends Component {
   deleteDataFromDB = idTodelete => {
     let objIdToDelete = null;
     this.state.data.forEach(dat => {
-      if (dat.id === idTodelete) {
+      if (dat.id.toString() === idTodelete) {
         objIdToDelete = dat._id;
       }
     });
 
-    axios.delete("/api/deleteData", {
+    axios.delete("/api/tasks/deleteData", {
       data: {
         id: objIdToDelete
       }
-    });
+    })
+    .then(()=> this.getDataFromDb());;
   };
-
 
   /**
    * @description UpdateData method, updating existing data.
@@ -87,15 +87,16 @@ class App extends Component {
   updateDB = (idToUpdate, updateToApply) => {
     let objIdToUpdate = null;
     this.state.data.forEach(dat => {
-      if (dat.id === idToUpdate) {
-        objIdToUpdate = dat._id;
+      if (dat.id.toString() === idToUpdate) {
+        objIdToUpdate = dat.id;
       }
     });
 
-    axios.post("/api/updateData", {
+    axios.patch("/api/tasks/updateData", {
       id: objIdToUpdate,
       update: { message: updateToApply }
-    });
+    })
+    .then(()=> this.getDataFromDb());;
   };
 
 
@@ -121,7 +122,18 @@ class App extends Component {
           <input
             type="text"
             onChange={e => this.setState({ message: e.target.value })}
-            placeholder="add something in the database"
+            placeholder="get all/particular from the db"
+            style={{ width: "200px" }}
+          />
+          <button onClick={() => this.getDataFromDb(this.state.message)}>
+            GET
+          </button>
+        </div>
+        <div style={{ padding: "10px" }}>
+          <input
+            type="text"
+            onChange={e => this.setState({ message: e.target.value })}
+            placeholder="add something in the db"
             style={{ width: "200px" }}
           />
           <button onClick={() => this.putDataToDB(this.state.message)}>
