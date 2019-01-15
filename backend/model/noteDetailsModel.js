@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const DataSchema = new Schema(
+const noteDetails = new Schema(
     {
         id: Number,
         message: String
@@ -9,4 +9,4 @@ const DataSchema = new Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model("TaskDetails", DataSchema);
+module.exports = mongoose.model("NoteDetails", noteDetails);

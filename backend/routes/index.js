@@ -1,10 +1,10 @@
-const router = require("express").Router();
+const mainRouter = require("express").Router();
 
-router.get("/health", (req, res, next) => {
+mainRouter.get("/health", (req, res, next) => {
     res.send(200);
 });
 
-router.use("/tasks", require("./tasks.js"));
+mainRouter.use("/Notes", require("./notes.js"));
 //router.use("/reminders", require("./reminders.js"));
 
-module.exports = router;
+module.exports = mainRouter;

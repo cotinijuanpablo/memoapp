@@ -24,3 +24,5 @@ Severity Low
     babelify
     Monitor button for pasive fetching using the interval i had commented
     Add logging in the backend with errors/messages
+
+    boilerplate for backend, check the require imports situation

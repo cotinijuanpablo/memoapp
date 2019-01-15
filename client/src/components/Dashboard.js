@@ -12,22 +12,29 @@ class App extends Component {
     objectToUpdate: null
   };
 
- /**
- * @description On mounts, fetch all data from db with polling for changes
- */
+  /**
+  * @description On mounts, fetch all data from db with polling for changes
+  */
   componentDidMount() {
-    this.getDataFromDb();
-    if (!this.state.intervalIsSet) {
-      //let interval = setInterval(this.getDataFromDb, 1000);
-      //this.setState({ intervalIsSet: interval });
-    }
+    //this.setPolling(true);
   }
 
   /**
    * @description On Unmount kill the polling
    */
   componentWillUnmount() {
-    if (this.state.intervalIsSet) {
+    this.setPolling(false);
+  }
+
+  /**
+   * @description Activates/Deactivates the pollng from the DB.
+   * @param {Boolean} activate - Defines is polling should be activated or disabled
+   */
+  setPolling(activate) {
+    if (activate) {
+      let interval = setInterval(this.getDataFromDb, 2000);
+      this.setState({ intervalIsSet: interval });
+    } else {
       clearInterval(this.state.intervalIsSet);
       this.setState({ intervalIsSet: null });
     }
@@ -37,13 +44,13 @@ class App extends Component {
    * @description GetData method and sets it into the app state.
    */
   getDataFromDb = (id) => {
-    var url = !id ? "/api/tasks/" : `/api/tasks/${id}`
+    var url = !id ? "/api/notes/" : `/api/notes/${id}`
     axios.get(url)
-        .then(data => this.setState({ data: data.data.data }))
+      .then(response => this.setState({ data: response.data }))
   };
 
   /**
-   * @description PutData method, takign data to be stored.
+   * @description PutData method, taking data to be stored.
    *              Needs Heavy Reafactor in regards to the IDs
    */
   putDataToDB = message => {
@@ -53,17 +60,17 @@ class App extends Component {
       ++idToBeAdded;
     }
 
-    axios.post("/api/tasks/putData", {
+    axios.post("/api/notes/putData", {
       id: idToBeAdded,
       message: message
     })
-    .then(()=> this.getDataFromDb());
+      .then(() => this.getDataFromDb());
   };
 
-   /**
-   * @description DeleteData method, erasing existing data.
-   *              Needs Heavy Reafactor related to the the previous two
-   */
+  /**
+  * @description DeleteData method, erasing existing data.
+  *              Needs Heavy Reafactor related to the the previous two
+  */
   deleteDataFromDB = idTodelete => {
     let objIdToDelete = null;
     this.state.data.forEach(dat => {
@@ -72,12 +79,12 @@ class App extends Component {
       }
     });
 
-    axios.delete("/api/tasks/deleteData", {
+    axios.delete("/api/notes/deleteData", {
       data: {
         id: objIdToDelete
       }
     })
-    .then(()=> this.getDataFromDb());;
+      .then(() => this.getDataFromDb());;
   };
 
   /**
@@ -92,11 +99,11 @@ class App extends Component {
       }
     });
 
-    axios.patch("/api/tasks/updateData", {
+    axios.patch("/api/notes/updateData", {
       id: objIdToUpdate,
       update: { message: updateToApply }
     })
-    .then(()=> this.getDataFromDb());;
+      .then(() => this.getDataFromDb());;
   };
 
 
@@ -112,7 +119,7 @@ class App extends Component {
             ? "NO DB ENTRIES YET"
             : data.map(dat => (
               <li style={{ padding: "10px" }} key={dat.id}>
-                <span style={{ color: "gray" }}> id: </span> {dat.id} <br />
+                <span style={{ color: "gray" }}> id: </span> {dat._id} <br />
                 <span style={{ color: "gray" }}> data: </span>
                 {dat.message}
               </li>
@@ -125,7 +132,7 @@ class App extends Component {
             placeholder="get all/particular from the db"
             style={{ width: "200px" }}
           />
-          <button onClick={() => this.getDataFromDb(this.state.message)}>
+          <button onClick={() => {this.setPolling(false); this.getDataFromDb(this.state.message)}}>
             GET
           </button>
         </div>
@@ -172,6 +179,13 @@ class App extends Component {
             UPDATE
           </button>
         </div>
+        <button id="polling"
+          onClick={() =>
+            this.setPolling(true)
+          }
+        >
+          POLLING
+        </button>
       </div>
     );
   }

@@ -1,33 +1,33 @@
-const router = require("express").Router();
-const Notes = require("../model/notes");
-const NoteDetail = require("../model/notedetails");
+const notesRouter = require("express").Router();
+const Note = require("../model/noteModel");
+const NoteDetail = require("../model/noteDetailsModel");
 
 /**
- * @description response
+ * @description Generic response
  * @param {} err 
  * @param {Response} res - Reponse instance
  * @param {Object} data - Optional data to be sent
  */
 function reponse(err, res, data) {
-    if (err) return res.json({ success: false, error: err });
-    return !data ?  res.json({ success: true }) :
-                    res.json({ success: true, data: data });
+    if (err) return res.status(500).json( err );
+    return !data ?  res.sendStatus(200) :
+                    res.status(200).json( data );
 }
 
 /**
  * @description Get the data from the DB
  * @param res - response object in which to write the response.
  */
-router.get("/", (_, res) => {
-    Notes.find((err, data) => reponse(err, res, data));
+notesRouter.get("/", (_, res) => {
+    NoteDetail.find((err, data) => reponse(err, res, data));
 });
 
 /**
  * @description Get the data from the DB
  * @param res - response object in which to write the response.
  */
-router.get("/:id", (req, res) => {
-    Notes.find({ id: req.params.id }, (err, data) => reponse(err, res, data));
+notesRouter.get("/:id", (req, res) => {
+    NoteDetail.findById(req.params.id, (err, data) => reponse(err, res, [data]));
 });
 
 /**
@@ -35,8 +35,8 @@ router.get("/:id", (req, res) => {
  * @param req - request object with the values.
  * @param res - response object in which to write the response.
  */
-router.post("/putData", (req, res) => {
-    let data = new Notes();
+notesRouter.post("/putData", (req, res) => {
+    let data = new NoteDetail();
 
     const { id, message } = req.body;
 
@@ -56,9 +56,9 @@ router.post("/putData", (req, res) => {
  * @param req - request object with the values.
  * @param res - response object in which to write the response.
  */
-router.patch("/updateData", (req, res) => {
+notesRouter.patch("/updateData", (req, res) => {
     const { id, update } = req.body;
-    Notes.findOneAndUpdate(id, update, err => reponse(err, res));
+    NoteDetail.findOneAndUpdate(id, update, err => reponse(err, res));
 });
 
 /**
@@ -66,9 +66,9 @@ router.patch("/updateData", (req, res) => {
  * @param req - request object with the values.
  * @param res - response object in which to write the response.
  */
-router.delete("/deleteData", (req, res) => {
+notesRouter.delete("/deleteData", (req, res) => {
     const { id } = req.body;
-    Notes.findOneAndDelete({ _id: id }, err => reponse(err, res));
+    NoteDetail.findOneAndDelete({ _id: id }, err => reponse(err, res));
 });
 
-module.exports = router;
+module.exports = notesRouter;
