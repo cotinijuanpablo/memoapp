@@ -12,7 +12,7 @@ const render = () => {
     ReactDOM.render(
         <BrowserRouter>
             <React.Fragment>
-                <Route exact path="/" render={() => <Dashboard />}/>
+                <Route exact path="/" render={(props) => <Dashboard {...props}/>}/>
                 <Route exact path="/add" render={(props) => <AddNote {...props} />}/>
             </React.Fragment>
         </BrowserRouter>, document.getElementById('root')

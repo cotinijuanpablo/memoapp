@@ -3,8 +3,7 @@ const Schema = mongoose.Schema;
 
 const noteDetails = new Schema(
     {
-        id: Number,
-        message: String
+        description: String,
     },
     { timestamps: true }
 );

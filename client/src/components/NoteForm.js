@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from "react";
 import DatePicker from "react-datepicker";
 import axios from "axios";
 
@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 //import './index.css';
 
-class NoteForm extends React.Component {
+class NoteForm extends Component {
 
   constructor(props) {
     super(props);
@@ -38,7 +38,7 @@ class NoteForm extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     const props = this.props;
-    axios.post("/api/notes/putData", {
+    axios.post("/api/notes/", {
       title: this.state.title,
       category: this.state.category,
       deadLine: this.state.deadLine,
@@ -55,9 +55,16 @@ class NoteForm extends React.Component {
       </div>
       <div>
         <label htmlFor="category">Category: </label>
+
         <select name="category" value={this.state.category} onChange={this.onSpecifiedFieldChange.bind(this, 'category')}>
-          <option selected value="Work">Work</option>
-          <option value="Personal">Personal</option>
+        <option value="">
+                Select one...
+            </option>
+            {this.state.categories.map(entry => (
+                <option key={entry} value={entry}>
+                    {entry}
+                </option>
+            ))}
         </select>
       </div>
       <div>

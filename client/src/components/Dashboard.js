@@ -1,16 +1,27 @@
 import React, { Component } from "react";
 import axios from "axios";
 
-class App extends Component {
-  state = {
-    data: [],
-    id: 0,
-    message: null,
-    intervalIsSet: false,
-    idToDelete: null,
-    idToUpdate: null,
-    objectToUpdate: null
-  };
+//TODO
+/**
+ * Need to erase the ADD, this will redirect to add page and thats it.
+ * Define a better functionality for the polling button
+ */
+
+class Dashboard extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      id: 0,
+      message: null,
+      intervalIsSet: false,
+      idToDelete: null,
+      idToUpdate: null,
+    };
+
+    this.goToAddNotes = this.goToAddNotes.bind(this);
+  }
 
   /**
   * @description On mounts, fetch all data from db with polling for changes
@@ -53,18 +64,8 @@ class App extends Component {
    * @description PutData method, taking data to be stored.
    *              Needs Heavy Reafactor in regards to the IDs
    */
-  putDataToDB = message => {
-    let currentIds = this.state.data.map(data => data.id);
-    let idToBeAdded = 0;
-    while (currentIds.includes(idToBeAdded)) {
-      ++idToBeAdded;
-    }
-
-    axios.post("/api/notes/putData", {
-      id: idToBeAdded,
-      message: message
-    })
-      .then(() => this.getDataFromDb());
+  goToAddNotes = () => {
+    this.props.history.push('/add')
   };
 
   /**
@@ -72,16 +73,16 @@ class App extends Component {
   *              Needs Heavy Reafactor related to the the previous two
   */
   deleteDataFromDB = idTodelete => {
-    let objIdToDelete = null;
-    this.state.data.forEach(dat => {
-      if (dat.id.toString() === idTodelete) {
-        objIdToDelete = dat._id;
-      }
-    });
+    // let objIdToDelete = null;
+    // this.state.data.forEach(dat => {
+    //   if (dat._id.toString() === idTodelete) {
+    //     objIdToDelete = dat._id;
+    //   }
+    // });
 
-    axios.delete("/api/notes/deleteData", {
+    axios.delete("/api/notes/", {
       data: {
-        id: objIdToDelete
+        id: idTodelete
       }
     })
       .then(() => this.getDataFromDb());;
@@ -99,7 +100,7 @@ class App extends Component {
       }
     });
 
-    axios.patch("/api/notes/updateData", {
+    axios.patch("/api/notes/", {
       id: objIdToUpdate,
       update: { message: updateToApply }
     })
@@ -118,10 +119,11 @@ class App extends Component {
           {data.length <= 0
             ? "NO DB ENTRIES YET"
             : data.map(dat => (
-              <li style={{ padding: "10px" }} key={dat.id}>
+              <li style={{ padding: "10px" }} key={dat._id}>
                 <span style={{ color: "gray" }}> id: </span> {dat._id} <br />
-                <span style={{ color: "gray" }}> data: </span>
-                {dat.message}
+                <span style={{ color: "gray" }}> title: </span> {dat.title} <br />
+                <span style={{ color: "gray" }}> category: </span> {dat.category} <br />
+                <span style={{ color: "gray" }}> done: </span> {dat.done ? 'Yes' : 'No'}
               </li>
             ))}
         </ul>
@@ -132,19 +134,8 @@ class App extends Component {
             placeholder="get all/particular from the db"
             style={{ width: "200px" }}
           />
-          <button onClick={() => {this.setPolling(false); this.getDataFromDb(this.state.message)}}>
+          <button onClick={() => { this.setPolling(false); this.getDataFromDb(this.state.message) }}>
             GET
-          </button>
-        </div>
-        <div style={{ padding: "10px" }}>
-          <input
-            type="text"
-            onChange={e => this.setState({ message: e.target.value })}
-            placeholder="add something in the db"
-            style={{ width: "200px" }}
-          />
-          <button onClick={() => this.putDataToDB(this.state.message)}>
-            ADD
           </button>
         </div>
         <div style={{ padding: "10px" }}>
@@ -179,16 +170,18 @@ class App extends Component {
             UPDATE
           </button>
         </div>
-        <button id="polling"
-          onClick={() =>
-            this.setPolling(true)
-          }
-        >
-          POLLING
+        <div style={{ padding: "10px" }}>
+          <button onClick={() => this.goToAddNotes()}>
+            ADD NOTE
+          </button>
+          <button id="polling"
+            onClick={() => this.setPolling(true)}
+          >ACTIVATE POLLING
         </button>
+        </div>
       </div>
     );
   }
 }
 
-export default App;
+export default Dashboard;

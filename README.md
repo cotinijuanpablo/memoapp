@@ -4,25 +4,22 @@ React, Axios, Express and MongoDB.
 //TODO
 
 Severity High
-    Multiclick cause Multiple push into DB.
-        Need to solve that in an elegantly.
-        Also need to figure out if the ID should be an increment Database Side instead of FE side.
-            Sounds better.
-        Maybe locking the UI minimally un response from Back no completion
-            Or stacking the actions a la batch mode.
+    Update the UI on changes
+    Use the reponse from the back backend
+        Do not move from add on failure, notify user, etc
+    On edition (TODO)
+        When save modify the fields on the left instead of refetch.
 
 Severity Medium
-    Start Thinking on the scheme to be used.
+    Should add some value sanitization 
+    Rethink the schemes.
 
 Severity Low
-    Create DB users for others
-    Check how to reuse the dependencies from all the package.json
-        Is this really a good idea?
-    Shoudl add some value sanitization 
-    Webpack, check if I can use it.
-    how to create react tooltips
-    babelify
-    Monitor button for pasive fetching using the interval i had commented
+    How to create react tooltips
+    Babelify on backend
+        Boilerplate for backend?
+        Check the require imports situation
+    Rethink the Monitor button for pasive fetching on interval.
     Add logging in the backend with errors/messages
 
-    boilerplate for backend, check the require imports situation
+Severity Trivial
