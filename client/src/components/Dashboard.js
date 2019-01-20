@@ -73,13 +73,6 @@ class Dashboard extends Component {
   *              Needs Heavy Reafactor related to the the previous two
   */
   deleteDataFromDB = idTodelete => {
-    // let objIdToDelete = null;
-    // this.state.data.forEach(dat => {
-    //   if (dat._id.toString() === idTodelete) {
-    //     objIdToDelete = dat._id;
-    //   }
-    // });
-
     axios.delete("/api/notes/", {
       data: {
         id: idTodelete
@@ -120,10 +113,13 @@ class Dashboard extends Component {
             ? "NO DB ENTRIES YET"
             : data.map(dat => (
               <li style={{ padding: "10px" }} key={dat._id}>
-                <span style={{ color: "gray" }}> id: </span> {dat._id} <br />
-                <span style={{ color: "gray" }}> title: </span> {dat.title} <br />
-                <span style={{ color: "gray" }}> category: </span> {dat.category} <br />
-                <span style={{ color: "gray" }}> done: </span> {dat.done ? 'Yes' : 'No'}
+                <span style={{ color: "gray" }}> Id: </span>{dat._id}<br />
+                <span style={{ color: "gray" }}> Title: </span>{dat.title}<br />
+                <span style={{ color: "gray" }}> Category: </span>{dat.category}<br />
+                <span style={{ color: "gray" }}> Done: </span>{dat.done ? 'Yes' : 'No'}<br />
+                <button onClick={() => { console.log('TODO the call to the DB and the openign of a side panel with the info') }}>
+                  VIEW OR EDIT
+                </button>
               </li>
             ))}
         </ul>

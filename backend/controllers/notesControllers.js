@@ -9,12 +9,12 @@ var notesControllers = function (NoteModel, NoteDetailModel) {
      */
     var reponse = (err, res, data, status = 200) => {
         if (err) return res.status(500).json(err);
-        return  !data ? res.sendStatus(status) :
-                res.status(status).json(data);
+        return !data ? res.sendStatus(status) :
+            res.status(status).json(data);
     }
 
     var get = (res) => {
-        NoteModel.find((err, data) => reponse(err, res, data));        
+        NoteModel.find((err, data) => reponse(err, res, data));
     }
 
     var getById = (req, res) => {
@@ -23,42 +23,50 @@ var notesControllers = function (NoteModel, NoteDetailModel) {
 
     var getDescriptionById = (req, res) => {
         NoteModel
-        .findById(req.params.id)
-        .populate('descriptionId')
-        .exec((err, data) => {
-            data.descriptionId = data.descriptionId.description;
-            reponse(err, res, data)
-        });
+            .findById(req.params.id)
+            .populate('descriptionId')
+            .exec((err, data) => {
+                data.descriptionId = data.descriptionId.description;
+                reponse(err, res, data)
+            });
     }
 
     var getFullIformationById = (req, res) => {
         NoteModel
-        .findById(req.params.id)
-        .populate('descriptionId')
-        .exec((err, data) => {
-            reponse(err, res, data)
-        });
+            .findById(req.params.id)
+            .populate('descriptionId')
+            .exec((err, data) => {
+                reponse(err, res, data)
+            });
     }
 
     var post = (req, res) => {
         //shoudl use transaction, mongoose has those with session
         const { title, category, deadLine, description } = req.body;
-        
-        let NewNoteDetail = new NoteDetailModel();
-        NewNoteDetail.description = description;
 
-        NewNoteDetail.save(err => {
-            
-            if (err) return reponse(err, res);
+        //create a function that vaidates exsitence of all required fields
+        //I coudl add typescript here and be sure fo type, what if title is 465 or true?
+        if (!title || !category || !deadLine || !description) {
+            res.status(400);
+            res.send('All parameters are required');
+        }
+        else {
+            let NewNoteDetail = new NoteDetailModel();
+            NewNoteDetail.description = description;
 
-            let NewNote = new NoteModel();
-            NewNote.title = title;
-            NewNote.category = category;
-            NewNote.deadLine = deadLine; 
-            NewNote.descriptionId = NewNoteDetail._id;
+            NewNoteDetail.save(err => {
 
-            NewNote.save(err => reponse(err, res, NewNoteDetail, 201));
-        })
+                if (err) return reponse(err, res);
+
+                let NewNote = new NoteModel();
+                NewNote.title = title;
+                NewNote.category = category;
+                NewNote.deadLine = deadLine;
+                NewNote.descriptionId = NewNoteDetail._id;
+
+                NewNote.save(err => reponse(err, res, NewNoteDetail, 201));
+            })
+        }
     }
 
     var patch = (req, res) => {
